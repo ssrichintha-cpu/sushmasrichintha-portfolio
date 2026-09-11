@@ -10,6 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
     yearSpan.textContent = new Date().getFullYear();
   }
 
+  // Force Resume Download / Fallback View Functionality
+  const downloadBtn = document.querySelector('a[href="images/resume.pdf"]');
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      fetch("images/resume.pdf")
+        .then((response) => {
+          if (!response.ok) throw new Error("File not found");
+          return response.blob();
+        })
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = "Srichintha_Devi_Sushma_Resume.pdf";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          a.remove();
+        })
+        .catch(() => {
+          // Fallback: Open in new tab if programmatic download fails
+          window.open("images/resume.pdf", "_blank");
+        });
+    });
+  }
+
   // Mobile Navigation Toggle
   const mobileToggle = document.getElementById("mobileToggle");
   const navLinks = document.getElementById("navLinks");
